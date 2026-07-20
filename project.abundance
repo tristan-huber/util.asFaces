@@ -4,6 +4,12 @@
   "y": 0,
   "uniqueID": "id-1",
   "name": "util.asFaces",
+  "ioValues": [
+    {
+      "name": "shape",
+      "ioValue": "__GEOMETRY_INPUT__"
+    }
+  ],
   "topLevel": true,
   "allAtoms": [
     {
@@ -17,9 +23,43 @@
           "ioValue": "__GEOMETRY_INPUT__"
         }
       ]
+    },
+    {
+      "atomType": "Code",
+      "x": 0.44596354166666663,
+      "y": 0.6428571428571428,
+      "uniqueID": "id-4",
+      "ioValues": [
+        {
+          "name": "shape",
+          "ioValue": "__GEOMETRY_INPUT__"
+        }
+      ],
+      "interpreterVersion": 1,
+      "code": "\nfunction run(\n  shape: Assembly\n) {\n  let result = undefined;\n  return shape.onLeafs((leaf) => {\n    if (leaf.is3D()) {\n      const f = leaf.geometry.faces\n      if (f.length > 1) {\n        const subassembly = []\n        for (const face of f) {\n          subassembly.push(new Assembly({\n            geometry: face\n          }))\n        }\n        leaf.geometry = subassembly\n      } else {\n        leaf.geometry = f[0]\n      }\n    } else if (leaf.geometry instanceof replicad.Drawing) {\n      const solidifiedFaces = leaf.geometry.sketchOnPlane(leaf.plane).extrude(0.1).faces\n      leaf.geometry = solidifiedFaces[solidifiedFaces.length - 2] // Usually where the initial face is indexed after extrusion.      \n    } else {\n      return undefined\n    }\n    return leaf;\n  })\n  return result;\n}\n",
+      "compiledCode": "\"use strict\";\nfunction run(shape) {\n    let result = undefined;\n    return shape.onLeafs((leaf) => {\n        if (leaf.is3D()) {\n            const f = leaf.geometry.faces;\n            if (f.length > 1) {\n                const subassembly = [];\n                for (const face of f) {\n                    subassembly.push(new Assembly({\n                        geometry: face\n                    }));\n                }\n                leaf.geometry = subassembly;\n            }\n            else {\n                leaf.geometry = f[0];\n            }\n        }\n        else if (leaf.geometry instanceof replicad.Drawing) {\n            const solidifiedFaces = leaf.geometry.sketchOnPlane(leaf.plane).extrude(0.1).faces;\n            leaf.geometry = solidifiedFaces[solidifiedFaces.length - 2]; // Usually where the initial face is indexed after extrusion.      \n        }\n        else {\n            return undefined;\n        }\n        return leaf;\n    });\n    return result;\n}\n"
+    },
+    {
+      "atomType": "Input",
+      "x": 0.0231,
+      "y": 0.35428571428571426,
+      "uniqueID": "id-14",
+      "name": "shape",
+      "type": "geometry"
     }
   ],
-  "allConnectors": [],
+  "allConnectors": [
+    {
+      "ap2Name": "number or geometry",
+      "ap1ID": "id-4",
+      "ap2ID": "id-2"
+    },
+    {
+      "ap2Name": "shape",
+      "ap1ID": "id-14",
+      "ap2ID": "id-4"
+    }
+  ],
   "unitsKey": "Unitless",
   "fileTypeVersion": 1,
   "filetypeVersion": 1
